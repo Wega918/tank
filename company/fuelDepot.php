@@ -1,0 +1,103 @@
+<?php
+$title = 'Топливный склад дивизии';
+require_once ('../system/function.php');
+require_once ('../system/header.php');
+if(!$user['id']) {
+header('Location: /');
+exit();
+}
+if($user['company']<=0) {header('Location: /');exit();}
+
+$res_company = $mysqli->query('SELECT * FROM `company` WHERE `id` = '.$user['company'].' LIMIT 1');
+$company = $res_company->fetch_assoc();
+
+$res_company_user = $mysqli->query('SELECT * FROM `company_user` WHERE `user` = '.$user['id'].' and `company` = '.$company['id'].' LIMIT 1');
+$company_user = $res_company_user->fetch_assoc();
+
+$cost_silver = (50+($company['level']*20));
+$fuel = ($company['level']*15);
+
+echo '<div class="medium white bold cntr mb2">Топливный склад дивизии</div>
+<div class="trnt-block mb2">
+<div class="wrap1"><div class="wrap2"><div class="wrap3"><div class="wrap4"><div class="wrap5"><div class="wrap6"><div class="wrap7"><div class="wrap8">
+<div class="wrap-content">
+<div class="thumb fl"><img width="50" height="50" src="/images/clan/fuelDepot.png" style="width:100%; border-radius: 9px;"><span class="mask2">&nbsp;</span></div>
+<div class="ml58 small white sh_b bold">
+<span class="green2">Хранение топлива</span><br>
+Выдача: раз в 20 часов
+<div class="">Бонус: <img class="price_img_" src="/images/icons/fuel.png"> <span class="green1">'.$fuel.' топлива</span></div>
+</div></div>';
+if($company_user['fuelDepot_time']==0){
+if(($company_user['company_time']+72000)>time()){
+echo '<div class="cntr red1 mt5 mb2"><font size=2%><b>Станет доступно через: '._time(($company_user['company_time']+72000)-time()).'</b></font></div><br>';
+}else{
+echo '<div class="bot">
+<a class="simple-but border mb5" href="?fuelDepot"><span><span>Производить топливо за <img class="ico vm" src="/images/icons/silver.png" alt="Серебро" title="Серебро"> '.$cost_silver.'</span></span></a>
+<div style="position:relative;"><span class="digit2 esmall"><span class="l">&nbsp;</span><span class="m">+</span><span class="r">&nbsp;</span></span></div>
+</div>';
+}
+}elseif($company_user['fuelDepot_time']<time() and $company_user['fuelDepot_time']>0){
+$prog = round((72000-($company_user['fuelDepot_time']-time()))*100/72000);if($prog > 100) {$prog = 100;}
+echo '<div class="bot">
+<a class="simple-but border mb5" href="?act_fuelDepot"><span><span>Получить топливо</span></span></a>
+<div style="position:relative;"><span class="digit2 esmall"><span class="l">&nbsp;</span><span class="m">+</span><span class="r">&nbsp;</span></span></div>
+</div>';
+}elseif($company_user['fuelDepot_time']>time()){
+$prog = round((72000-($company_user['fuelDepot_time']-time()))*100/72000);if($prog > 100) {$prog = 100;}
+echo '<table class="rblock mt5 mb5 esmall"><tbody><tr>
+<td class="vam"><div class="nwr pr5 gray1"><img class="price_img_" src="/images/icons/fuel.png" alt="" w:id="image">&nbsp;'.$fuel.'</div></td>
+<td class="progr"><div class="scale-block"><div class="scale" style="width:'.$prog.'%;" w:id="widthPercent">&nbsp;</div><div class="mask">&nbsp;</div></div></td>
+<td><div class="value-block lh1"><span><span w:id="remainingTime">'._time($company_user['fuelDepot_time']-time()).'</span></span></div></td>
+</tr></tbody></table>';
+}
+echo '</div></div></div></div></div></div></div></div></div></div>';
+
+echo '<div class="trnt-block mb2"><div class="wrap1"><div class="wrap2"><div class="wrap3"><div class="wrap4"><div class="wrap5"><div class="wrap6"><div class="wrap7"><div class="wrap8"><div class="wrap-content-mini">
+<div class="mt5 mb5 small green1 cntr">Чем выше уровень дивизии, тем больше топлива вы получите</div>
+</div></div></div></div></div></div></div></div></div></div>';
+
+##################################################################################################################
+##################################################################################################################
+##################################################################################################################
+if(isset($_GET['act_fuelDepot'])){
+if($company_user['fuelDepot_time']==0){header('Location: ?');exit();}
+if($company_user['fuelDepot_time']>time()){header('Location: ?');exit();}
+$mysqli->query("UPDATE `users` SET `fuel` = '".($user['fuel']+$fuel)."' WHERE `id` = '".$user['id']."' LIMIT 1");
+$mysqli->query("UPDATE `company_user` SET `fuelDepot_time` = '0' WHERE `id` = '".$company_user['id']."' LIMIT 1");
+
+####################################################################################
+$res = $mysqli->query('SELECT * FROM `missions_user` WHERE `user` = '.$user['id'].' and `id_miss` = "12" limit 1');
+$miss = $res->fetch_assoc();
+if($miss['prog']<$miss['prog_max'] and $miss['time']<time()){
+$mysqli->query('UPDATE `missions_user` SET `prog` = `prog` + "1" WHERE `user` = '.$user['id'].' and `id_miss` = "12" and `prog` < "1" and `time` < "'.time().'" limit 1');
+if($miss['prog']>=($miss['prog_max']-1) and $miss['time']<time()){$_SESSION['miss'] = 1;}
+}
+####################################################################################
+$_SESSION['err'] = '<div class="green1 sh_b mb2">Получено топливо <img class="price_img_" src="/images/icons/fuel.png" alt="" w:id="image">&nbsp;'.$fuel.' </div>';
+header('Location: ?');
+exit();
+}
+##################################################################################################################
+##################################################################################################################
+##################################################################################################################
+
+##################################################################################################################
+##################################################################################################################
+##################################################################################################################
+if(isset($_GET['fuelDepot'])){
+if(($company_user['company_time']+72000)>time()){header('Location: ?');exit();}
+if($user['silver'] < $cost_silver){$_SESSION['err'] = '<div class="trnt-block"><div class="wrap1"><div class="wrap2"><div class="wrap3"><div class="wrap4"><div class="wrap5"><div class="wrap6"><div class="wrap7"><div class="wrap8"><div class="wrap-content cntr"><div class="red1">У вас не хватает <img class="ico vm" src="/images/icons/silver.png?1" alt="Серебро" title="Серебро"> '.($cost_silver-$user['silver']).' серебра</div></div></div></div></div></div></div></div></div></div></div>';header('Location: ?');exit();}
+if($company_user['fuelDepot_time']>time()){header('Location: ?');exit();}
+if($company_user['fuelDepot_time']<time() and $company_user['fuelDepot_time']>0){header('Location: ?');exit();}
+$mysqli->query("UPDATE `users` SET `silver` = '".($user['silver']-$cost_silver)."' WHERE `id` = '".$user['id']."' LIMIT 1");
+$mysqli->query("UPDATE `company_user` SET `fuelDepot_time` = '".(time()+72000)."' WHERE `id` = '".$company_user['id']."' LIMIT 1");
+$_SESSION['err'] = '<div class="green1 sh_b mb2"><img height="14" width="14" src="/images/icons/victory.png"> Началось производство топлива! <img height="14" width="14" src="/images/icons/victory.png"></div>';
+header('Location: ?');
+exit();
+}
+##################################################################################################################
+##################################################################################################################
+##################################################################################################################
+
+require_once ('../system/footer.php');
+?>
