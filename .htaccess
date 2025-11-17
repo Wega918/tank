@@ -1,0 +1,199 @@
+#Кодировка#
+AddDefaultCharset utf-8
+php_value register_globals on
+#php_flag display_errors 1
+php_value error_reporting 7
+
+
+#Директория#
+DirectoryIndex index.php
+Options -Indexes
+RewriteEngine On 
+
+
+
+
+# Блокируем любой скрипт пытающийся отправить любое дерьмо чере base64_encode по URL
+RewriteCond %{QUERY_STRING} base64_encode.*(.*) [OR]
+RewriteCond %{QUERY_STRING} base64_encode[^(]*\([^)]*\) [OR]
+
+# Блокируем любой скрипт который содержит тег < script> в URL
+RewriteCond %{QUERY_STRING} (<|%3C).*script.*(>|%3E) [NC,OR]
+RewriteCond %{QUERY_STRING} (<|%3C)([^s]*s)+cript.*(>|%3E) [NC,OR]
+ 
+# Блокируем любой скрипт, который пытается установить глобальную переменную PHP через URL
+RewriteCond %{QUERY_STRING} GLOBALS(=|[|%[0-9A-Z]{0,2}) [OR]
+RewriteCond %{QUERY_STRING} GLOBALS(=|\[|\%[0-9A-Z]{0,2}) [OR]
+ 
+# Блокируем любой скрипт пытающийся изменить _REQUEST переменную через URL
+RewriteCond %{QUERY_STRING} _REQUEST(=|[|%[0-9A-Z]{0,2}) [OR]
+RewriteCond %{QUERY_STRING} _REQUEST(=|\[|\%[0-9A-Z]{0,2})
+  
+# Блокируем любой скрипт, который пытается установить sbp or sb_authorname чере URL (баг simpleboard)
+RewriteCond %{QUERY_STRING} sbp(=|%20|%3D) [OR]
+RewriteCond %{QUERY_STRING} sb_authorname(=|%20|%3D)
+ 
+RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
+RewriteRule ^(.*)$ http://%1/$1 [R=301,L]
+RewriteCond %{THE_REQUEST} ^[A-Z]{3,9}\ /index\.php\ HTTP/
+RewriteRule ^index\.php$ http://%{HTTP_HOST}/ [R=301,L]
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+
+
+
+<FilesMatch ".(flv|gif|jpg|jpeg|png|ico|swf|js|css|pdf)$">  
+Header set Cache-Control "max-age=2592000"  
+</FilesMatch>  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+RewriteRule ^pm/?$ pm/index.php [L,QSA]
+RewriteRule ^dialog/([0-9]*)/([0-9]*)/?$ pm/dialog.php?&d=$1&ank_=$2 [L,QSA]
+
+RewriteRule ^company/([0-9]*)/?$ company/index.php?&id=$1 [L,QSA]
+RewriteRule ^usset/([0-9]*)/?$ company/usset.php?&id=$1 [L,QSA]
+RewriteRule ^barracks/?$ company/barracks.php [L,QSA]
+RewriteRule ^fuelDepot/?$ company/fuelDepot.php [L,QSA]
+RewriteRule ^polygon/?$ company/polygon.php [L,QSA]
+RewriteRule ^cchat/?$ company/cchat.php [L,QSA]
+RewriteRule ^company/assault/?$ company/assault/index.php [L,QSA]
+RewriteRule ^company/battle/?$ company/assault/battle.php [L,QSA]
+RewriteRule ^chat/?$ chat/index.php [L,QSA]
+RewriteRule ^moderators/?$ chat/moderators.php [L,QSA]
+
+
+RewriteRule ^1/?$ start/1.php [L,QSA]
+RewriteRule ^2/?$ start/2.php [L,QSA]
+RewriteRule ^start/([0-9]*)/?$ start/index.php?&id=$1 [L,QSA]
+
+RewriteRule ^exit/?$ exit.php [L,QSA]
+RewriteRule ^agreement/?$ about/agreement.php [L,QSA]
+RewriteRule ^rules/?$ about/rules.php [L,QSA]
+RewriteRule ^communication/?$ about/communication.php [L,QSA]
+RewriteRule ^training/([0-9]*)/?$ user/training.php?&id=$1 [L,QSA]
+RewriteRule ^power/([0-9]*)/?$ power/index.php?id=$1 [L,QSA]
+RewriteRule ^pimp/([0-9]*)/?$ power/pimp.php?id=$1 [L,QSA]
+RewriteRule ^upgrade/([0-9]*)/?$ power/upgrade.php?id=$1 [L,QSA]
+RewriteRule ^modification/([0-9]*)/?$ power/modification.php?id=$1 [L,QSA]
+RewriteRule ^modselect/([0-9]*)/([0-9]*)/?$ power/modselect.php?id=$1&tip=$2 [L,QSA]
+RewriteRule ^production/([0-9]*)/?$ buildings/production.php?id=$1 [L,QSA]
+RewriteRule ^vhod/?$ vhod.php?id=$1 [L,QSA]
+RewriteRule ^batll/?$ batll.php?id=$1 [L,QSA]
+RewriteRule ^NotInClan/?$ online/NotInClan.php?id=$1 [L,QSA]
+RewriteRule ^search/?$ online/search.php [L,QSA]
+RewriteRule ^search_c/?$ online/search_c.php [L,QSA]
+
+
+RewriteRule ^new_company/?$ company/new_company.php [L,QSA]
+RewriteRule ^no_company/?$ company/no_company.php [L,QSA]
+RewriteRule ^companyevents/?$ company/companyevents.php [L,QSA]
+RewriteRule ^company_avatar/?$ company/company_avatar.php [L,QSA]
+RewriteRule ^hq/?$ company/hq.php [L,QSA]
+RewriteRule ^hqstats/?$ company/hqstats.php [L,QSA]
+RewriteRule ^companystats/?$ company/companystats.php [L,QSA]
+RewriteRule ^company_chat/?$ company/chat.php [L,QSA]
+RewriteRule ^company_otvet/?$ company/otvet.php [L,QSA]
+RewriteRule ^company/otvet_$1?$ company/chat.php?act=otvet_$1 [L,QSA]
+RewriteRule ^company/otvet_([0-9]*)/?$ company/chat.php?act=otvet_&$1 [L,QSA]
+RewriteRule ^company/([0-9]*)?$ company/index.php?id=$1 [L,QSA]
+RewriteRule ^company/pastassaults/?$ company/pastassaults.php [L,QSA]
+
+
+RewriteRule ^battle/1/?$ battle/1.php [L,QSA]
+RewriteRule ^battle/2/?$ battle/2.php [L,QSA]
+RewriteRule ^battle/3/?$ battle/3.php [L,QSA]
+
+
+RewriteRule ^selectGermany/?$ tanksmagazine/selectGermany.php [L,QSA]
+RewriteRule ^selectUssr/?$ tanksmagazine/selectUssr.php [L,QSA]
+RewriteRule ^selectUsa/?$ tanksmagazine/selectUsa.php [L,QSA]
+
+RewriteRule ^myGermany/?$ tanksmagazine/myGermany.php [L,QSA]
+RewriteRule ^myUssr/?$ tanksmagazine/myUssr.php [L,QSA]
+RewriteRule ^myUsa/?$ tanksmagazine/myUsa.php [L,QSA]
+
+
+RewriteRule ^ammunation/?$ ammunation/magazine.php [L,QSA]
+RewriteRule ^rating/company/?$ rating/company.php [L,QSA]
+RewriteRule ^rating/tanks/?$ rating/tanks.php [L,QSA]
+RewriteRule ^rating/users/?$ rating/users.php [L,QSA]
+RewriteRule ^rating/bz_miss/?$ rating/paska_miss.php [L,QSA]
+RewriteRule ^rating/bz_eggs/?$ rating/paska_eggs.php [L,QSA]
+
+RewriteRule ^crew/?$ user/crew.php [L,QSA]
+RewriteRule ^vip/?$ user/vip.php [L,QSA]
+RewriteRule ^shellskills/?$ user/shellskills.php [L,QSA]
+RewriteRule ^power/?$ power/power.php [L,QSA]
+RewriteRule ^profile/([0-9]*)/?$ user/index.php?&id=$1 [L,QSA]
+RewriteRule ^crew/([0-9]*)/?$ user/crew.php?&id=$1 [L,QSA]
+RewriteRule ^skills/([0-9]*)/?$ user/skills.php?&id=$1 [L,QSA]
+RewriteRule ^shellskills/([0-9]*)/?$ user/shellskills.php?&id=$1 [L,QSA]
+RewriteRule ^pass/?$ login/pass.php [L,QSA]
+RewriteRule ^settings/?$ settings.php [L,QSA]
+RewriteRule ^avatars/?$ user/avatars.php [L,QSA]
+RewriteRule ^avatarspay/([0-9]*)/([0-9]*)/?$ user/avatarspay.php?id=$1&page=$2 [L,QSA]
+RewriteRule ^avatarspayok/([0-9]*)/([0-9]*)/?$ user/avatarspayok.php?id=$1&page=$2 [L,QSA]
+RewriteRule ^avatarsact/([0-9]*)/([0-9]*)/?$ user/avatarsact.php?id=$1&page=$2 [L,QSA]
+
+
+RewriteRule ^razdel/([0-9]*)/?$ forum/razdel.php?id=$1 [L,QSA]
+RewriteRule ^topik/([0-9]*)/([0-9]*)/([0-9]*)/?$ forum/topik.php?id_razdel=$1&id_topik=$2&page=$3 [L,QSA]
+RewriteRule ^otvet/([0-9]*)/([0-9]*)/?$ forum/otvet.php?id=$1&page=$2 [L,QSA]
+RewriteRule ^msgdel/([0-9]*)/([0-9]*)/?$ forum/msgdel.php?id=$1&page=$2 [L,QSA]
+RewriteRule ^cdel/([0-9]*)/([0-9]*)/?$ chat/cdel.php?id=$1&page=$2 [L,QSA]
+RewriteRule ^ccdel/([0-9]*)/([0-9]*)/?$ company/ccdel.php?id=$1&page=$2 [L,QSA]
+RewriteRule ^ccdelb/([0-9]*)/([0-9]*)/?$ company/ccdelb.php?id=$1&page=$2 [L,QSA]
+RewriteRule ^otvetcc/([0-9]*)/([0-9]*)/?$ company/otvetcc.php?id=$1&page=$2 [L,QSA]
+RewriteRule ^otvetccb/([0-9]*)/([0-9]*)/?$ company/otvetccb.php?id=$1&page=$2 [L,QSA]
+RewriteRule ^otvetc/([0-9]*)/([0-9]*)/?$ chat/otvetc.php?id=$1&page=$2 [L,QSA]
+RewriteRule ^redact/([0-9]*)/?$ forum/redact.php?id=$1 [L,QSA]
+RewriteRule ^Advanced/?$ missions/Advanced.php [L,QSA]
+
+
+RewriteRule ^pvp/battle/?$ pvp/battle.php [L,QSA]
+RewriteRule ^pvp/divisions/?$ pvp/divisions.php [L,QSA]
+RewriteRule ^pvp/top/?$ pvp/top.php [L,QSA]
+RewriteRule ^pvp/at-division/?$ pvp/at-division.php [L,QSA]
+
+
+RewriteRule ^pve/battle/?$ pve/battle.php [L,QSA]
+RewriteRule ^pve/pvepast/?$ pve/pvepast.php [L,QSA]
+
+
+RewriteRule ^dm/battle/?$ dm/battle.php [L,QSA]
+RewriteRule ^dm/dmpast/?$ dm/dmpast.php [L,QSA]
+
+RewriteRule ^dm_year/battle/?$ dm_year/battle.php [L,QSA]
+RewriteRule ^dm_year/dm_yearpast/?$ dm_year/dmpast.php [L,QSA]
+RewriteRule ^dm_year/turnir/([0-9]*)/?$ dm_year/turnir.php?&id=$1 [L,QSA]
+
+RewriteRule ^panel/?$ root_p/index.php [L,QSA]
+RewriteRule ^prom/?$ root_p/prom.php [L,QSA]
+RewriteRule ^sett/?$ root_p/sett.php [L,QSA]
+RewriteRule ^bon/?$ root_p/bon.php [L,QSA]
+RewriteRule ^xprom/([0-9]*)/?$ xprom.php?&id=$1 [L,QSA]
+RewriteRule ^convoy/boy/?$ convoy/boy.php [L,QSA]
+RewriteRule ^paywk/([0-9]*)/?$ root_p/paywk.php?&id=$1 [L,QSA]
+
+
+
+
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d

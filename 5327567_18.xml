@@ -1,0 +1,60 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+		<!--	created with www.mysitemapgenerator.com	-->
+		<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+<url>
+	<loc>https://mtank.ru/</loc>
+	<lastmod>2023-01-22T20:49:45+01:00</lastmod>
+	<priority>1.0</priority>
+</url>
+<url>
+	<loc>https://mtank.ru/start/</loc>
+	<lastmod>2023-01-22T20:49:45+01:00</lastmod>
+	<priority>0.8</priority>
+</url>
+<url>
+	<loc>https://mtank.ru/login/</loc>
+	<lastmod>2023-01-22T20:49:45+01:00</lastmod>
+	<priority>0.8</priority>
+	<image:image>
+			<image:loc>https://mtank.ru/images/logo3.jpg</image:loc>
+	</image:image>
+</url>
+<url>
+	<loc>https://mtank.ru/about</loc>
+	<lastmod>2023-01-22T20:49:45+01:00</lastmod>
+	<priority>0.8</priority>
+</url>
+<url>
+	<loc>https://mtank.ru/pass/</loc>
+	<lastmod>2023-01-22T20:49:48+01:00</lastmod>
+	<priority>0.8</priority>
+</url>
+<url>
+	<loc>http://mtank.ru/about/</loc>
+	<lastmod>2023-01-22T20:49:49+01:00</lastmod>
+	<priority>0.8</priority>
+</url>
+<url>
+	<loc>https://mtank.ru/about/</loc>
+	<lastmod>2023-01-22T20:49:49+01:00</lastmod>
+	<priority>0.8</priority>
+	<image:image>
+			<image:loc>https://mtank.ru/images/logo.jpg</image:loc>
+	</image:image>
+</url>
+<url>
+	<loc>https://mtank.ru/agreement/</loc>
+	<lastmod>2023-01-22T20:49:49+01:00</lastmod>
+	<priority>0.8</priority>
+</url>
+<url>
+	<loc>https://mtank.ru/rules/</loc>
+	<lastmod>2023-01-22T20:49:49+01:00</lastmod>
+	<priority>0.8</priority>
+</url>
+<url>
+	<loc>https://mtank.ru/communication/</loc>
+	<lastmod>2023-01-22T20:49:49+01:00</lastmod>
+	<priority>0.8</priority>
+</url>
+</urlset>
